@@ -22,27 +22,22 @@ class SudokuGenerator:
 	Return:
 	None
     '''
-    def __init__(self, row_length, removed_cells):
-        pass
 
-    '''
-	Returns a 2D python list of numbers which represents the board
+    #Initializes variables
+    def __init__(self, row_length, removed_cells): #FABIAN
+        self.row_length = row_length
+        self.removed_cells = removed_cells
+        self.board = [[0 for _ in range(row_length)] for _ in range(row_length)]
+        self.box_length = int(math.sqrt(row_length))
 
-	Parameters: None
-	Return: list[list]
-    '''
-    def get_board(self):
-        pass
 
-    '''
-	Displays the board to the console
-    This is not strictly required, but it may be useful for debugging purposes
+    def get_board(self): # Not Necessary
+        return self.board
 
-	Parameters: None
-	Return: None
-    '''
+    #Prints the board for user
     def print_board(self):
-        pass
+        return self.board
+
 
     '''
 	Determines if num is contained in the specified row (horizontal) of the board
@@ -95,8 +90,10 @@ class SudokuGenerator:
 
 	Return: boolean
     '''
-    def is_valid(self, row, col, num):
-        pass
+    def is_valid(self, row, col, num): #FABIAN
+        return (self.valid_in_row(row, num) and
+                self.valid_in_col(col, num) and
+                self.valid_in_box(row - row % self.box_length, col - col % self.box_length, num))
 
     '''
     Fills the specified 3x3 box with values
@@ -184,8 +181,14 @@ class SudokuGenerator:
 	Parameters: None
 	Return: None
     '''
-    def remove_cells(self):
-        pass
+    def remove_cells(self): #FABIAN
+        removed_count= 0
+        while removed_count < self.removed_cells:
+            row = random.randint(0, self.row_length - 1)
+            col = random.randint(0, self.box_length - 1)
+            if self.board[row][col] != 0:
+                self.board[row][col] = 0
+                removed_count += 1
 
 '''
 DO NOT CHANGE
