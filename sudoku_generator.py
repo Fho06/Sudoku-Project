@@ -1,4 +1,4 @@
-import math,random
+import math, random
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
@@ -115,8 +115,9 @@ class SudokuGenerator:
 	Parameters: None
 	Return: None
     '''
-    def fill_diagonal(self):
-        pass
+    def fill_diagonal(self): # Diego
+        for i in range(9):
+            self.board[i][i] = random.randint(1,9)
 
     '''
     DO NOT CHANGE
