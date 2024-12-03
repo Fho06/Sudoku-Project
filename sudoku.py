@@ -54,6 +54,19 @@ def draw_grid(surface):
         pygame.draw.line(surface, BLACK, (0, i * cell_size), (GRID_WIDTH, i * cell_size), thickness)  # Horizontal
         pygame.draw.line(surface, BLACK, (i * cell_size, 0), (i * cell_size, GRID_HEIGHT), thickness)  # Vertical
 
+def launch_grid():
+    grid_running = True
+    grid_screen = pygame.display.set_mode((GRID_WIDTH, GRID_HEIGHT))
+    pygame.display.set_caption("Sudoku Grid")
+    while grid_running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        draw_grid(grid_screen)
+        pygame.display.flip()
+
 # Game loop
 def start_game():
     running = True
@@ -82,11 +95,11 @@ def start_game():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.is_clicked(event.pos):
-                    draw_grid()
+                    launch_grid()
                 elif medium_button.is_clicked(event.pos):
-                    draw_grid()
+                    launch_grid()
                 elif hard_button.is_clicked(event.pos):
-                    draw_grid()
+                    launch_grid()
 
         pygame.display.flip()
 
