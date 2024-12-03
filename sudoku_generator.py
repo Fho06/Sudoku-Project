@@ -116,8 +116,8 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_diagonal(self): # Diego
-        for i in range(9):
-            self.board[i][i] = random.randint(1,9)
+        for i in range(3):
+            self.fill_box(i*3, i*3)
 
     '''
     DO NOT CHANGE
