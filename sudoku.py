@@ -20,6 +20,7 @@ DARK_BLUE = (50, 100, 200)
 pygame.font.init()
 TITLE_FONT = pygame.font.Font(None, 50)
 BUTTON_FONT = pygame.font.Font(None, 36)
+CELL_VALUE_FONT = pygame.font.Font(None, 36)
 
 # Button class
 class Button:
@@ -42,6 +43,93 @@ button_width, button_height = 120, 50
 easy_button = Button(WIDTH // 2 - button_width - 100, HEIGHT // 2, button_width, button_height, "Easy")
 medium_button = Button(WIDTH // 2 - button_width // 2, HEIGHT // 2, button_width, button_height, "Medium")
 hard_button = Button(WIDTH // 2 + button_width // 2 + 40, HEIGHT // 2, button_width, button_height, "Hard")
+
+# Cell Class
+class Cell:
+    def __init__(self, value, row, col, screen):
+        self.value = value
+        self.row = row
+        self.col = col
+        self.screen = screen
+        self.sketched = False
+
+    def set_cell_value(self, value):
+        self.sketched = False
+        self.value = value
+
+    def set_sketched_value(self, value):
+        self.sketched = True
+        self.value = False
+
+    def draw(self):
+        if(self.sketched):
+            textColor = GRAY
+        else:
+            textColor = BLACK
+    
+        self.screen.blit(CELL_VALUE_FONT.render(self.value, False, textColor), (self.row,self.col))
+
+# Board Class
+class Board:
+    def __init__(self, width, height, screen, difficulty):
+        pass
+        #Constructor for the Board class.
+        #screen is a window from PyGame.
+        #difficulty is a variable to indicate if the user chose easy medium, or hard.
+
+    def draw(self):
+        pass
+        #Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
+        #Draws every cell on this board.
+
+    def select(self, row, col):
+        pass
+        #Marks the cell at (row, col) in the board as the current selected cell.
+        #Once a cell has been selected, the user can edit its value or sketched value.
+
+    def click(self, row, col):
+        pass
+        #If a tuple of (x,y) coordinates is within the displayed board, 
+        #this function returns a tuple of the (row, col) of the cell which was clicked. 
+        #Otherwise, this function returns None.
+
+    def clear(self):
+        pass
+        #Clears the value cell. 
+        #Note that the user can only remove the cell values and 
+        #sketched values that are filled by themselves.
+
+    def sketch(self, value):
+        pass
+        #Sets the sketched value of the current selected cell equal to the user entered value.
+        #It will be displayed at the top left corner of the cell using the draw() function.
+
+    def place_number(self, value):
+        pass
+        #Sets the value of the current selected cell equal to the user entered value. 
+        #Called when the user presses the Enter key.
+
+    def reset_to_original(self):
+        pass
+        #Resets all cells in the board to their original values 
+        #(0 if cleared, otherwise the corresponding digit).
+
+    def is_full(self):
+        pass
+        #Returns a Boolean value indicating whether the board is full or not.
+
+    def update_board(self):
+        pass
+        #Updates the underlying 2D board with the values in all cells.
+
+    def find_empty(self):
+        pass
+        #Finds an empty cell and returns its row and col as a tuple (x,y).
+
+    def check_board(self):
+        pass
+        #Check whether the Sudoku board is solved correctly.
+
 
 # Draw 9x9 Sudoku grid
 def draw_grid(surface):
