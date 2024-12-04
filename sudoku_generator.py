@@ -41,7 +41,7 @@ class SudokuGenerator:
         for col in range(self.row_length):
             if self.board[row][col] == num:
                 return False
-            return True
+        return True
 
     '''
 	Determines if num is contained in the specified column (vertical) of the board
@@ -57,7 +57,7 @@ class SudokuGenerator:
         for row in range(self.row_length):
             if self.board[row][col] == num:
                 return False
-            return True
+        return True
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -89,7 +89,6 @@ class SudokuGenerator:
                     if col_counter > 1:
                         return False
         return True
-        pass
     '''
     Determines if it is valid to enter num at (row, col) in the board
     This is done by checking that num is unused in the appropriate, row, column, and box
@@ -122,7 +121,6 @@ class SudokuGenerator:
                 num = self.board[row_start + i][col_start + j]
                 if self.valid_in_box(row_start, col_start, num) is False:
                     self.board[row_start + i][col_start + j] = random.randrange(1, 9)
-        pass
     
     '''
     Fills the three boxes along the main diagonal of the board

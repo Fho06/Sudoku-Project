@@ -63,7 +63,7 @@ class Cell:
         self.value = False
 
     def draw(self):
-        if(self.sketched):
+        if self.sketched:
             textColor = GRAY
         else:
             textColor = BLACK
@@ -77,6 +77,7 @@ class Board:
         #Constructor for the Board class.
         #screen is a window from PyGame.
         #difficulty is a variable to indicate if the user chose easy medium, or hard.
+        self.selected_cell = None
         self.width = width
         self.height = height
         self.screen = screen
@@ -97,14 +98,37 @@ class Board:
                 self.cell_list[row][col] = Cell(self.startingBoard[row][col], row * cellSize, col * cellSize, screen) 
 
     def draw(self):
-        pass
         #Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
         #Draws every cell on this board.
 
+        # draw each cell
+        for row in range(self.height):
+            for col in range(self.width):
+                self.cell_list[row][col].draw(self.cell_size)
+
+        # draw grid lines with thicker lines for 3x3 boxes
+        cell_size = GRID_WIDTH // 9
+        for i in range(10):
+            thickness = 3 if i % 3 == 0 else 1
+            pygame.draw.line(self.screen, BLACK,
+                             (0, i * self.cell_size),
+                             (GRID_WIDTH, i * self.cell_size),
+                             thickness)
+            pygame.draw.line(self.screen, BLACK,
+                             (i * self.cell_size, 0),
+                             (i * self.cell_size, GRID_HEIGHT),
+                             thickness)
+
     def select(self, row, col):
-        pass
         #Marks the cell at (row, col) in the board as the current selected cell.
         #Once a cell has been selected, the user can edit its value or sketched value.
+        # deselect previous cell if exists
+        if self.selected_cell:
+            self.selected_cell = None
+
+        # select new cell
+        self.selected_cell = self.cell_list[row][col]
+        self.selected_cell.is_selected = True
 
     def click(self, row, col):
         pass
