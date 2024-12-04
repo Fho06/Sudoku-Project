@@ -6,8 +6,10 @@ import sudoku_generator
 pygame.init()
 
 # Screen dimensions
-WIDTH, HEIGHT = 600, 400
-GRID_WIDTH, GRID_HEIGHT = 600, 600
+WIDTH, HEIGHT = 800, 600
+GRID_WIDTH, GRID_HEIGHT = 450, 450
+GRID_X = (WIDTH - GRID_WIDTH) // 2
+GRID_Y = (HEIGHT - GRID_HEIGHT) // 2
 
 # Colors
 WHITE = (255, 255, 255)
@@ -19,9 +21,9 @@ DARK_BLUE = (50, 100, 200)
 
 # Fonts
 pygame.font.init()
-TITLE_FONT = pygame.font.Font(None, 50)
-BUTTON_FONT = pygame.font.Font(None, 28)
-CELL_VALUE_FONT = pygame.font.Font(None, 28)
+TITLE_FONT = pygame.font.Font('PressStart2P-Regular.ttf', 30)
+BUTTON_FONT = pygame.font.Font('PressStart2P-Regular.ttf',  15)
+CELL_VALUE_FONT = pygame.font.Font('PressStart2P-Regular.ttf',  8)
 
 # Button class
 class Button:
@@ -43,10 +45,14 @@ class Button:
 
 # Buttons
 button_width, button_height = 120, 50
-button_offset_y = 30
+button_offset_y = 35
 easy_button = Button(WIDTH // 2 - button_width - 100, HEIGHT // 2 + button_offset_y, button_width, button_height, "Easy", "button.png")
 medium_button = Button(WIDTH // 2 - button_width // 2, HEIGHT // 2 + button_offset_y, button_width, button_height, "Medium", "button.png")
 hard_button = Button(WIDTH // 2 + button_width // 2 + 40, HEIGHT // 2 + button_offset_y, button_width, button_height, "Hard", "button.png")
+
+reset_button = Button(WIDTH // 2 - button_width - 100, GRID_Y + GRID_HEIGHT + 10, button_width, button_height, "Reset", "button.png")
+restart_button = Button(WIDTH // 2 - button_width // 2, GRID_Y + GRID_HEIGHT + 10, button_width, button_height, "Restart", "button.png")
+exit_button = Button(WIDTH // 2 + button_width // 2 + 40, GRID_Y + GRID_HEIGHT + 10, button_width, button_height, "Exit", "button.png")
 
 # Cell Class
 class Cell:
@@ -116,12 +122,12 @@ class Board:
         for i in range(10):
             thickness = 3 if i % 3 == 0 else 1
             pygame.draw.line(self.screen, BLACK,
-                             (0, i * self.cell_size),
-                             (GRID_WIDTH, i * self.cell_size),
+                             (0, i * cell_size),
+                             (GRID_WIDTH, i * cell_size),
                              thickness)
             pygame.draw.line(self.screen, BLACK,
-                             (i * self.cell_size, 0),
-                             (i * self.cell_size, GRID_HEIGHT),
+                             (i * cell_size, 0),
+                             (i * cell_size, GRID_HEIGHT),
                              thickness)
 
     def select(self, row, col):
@@ -192,15 +198,34 @@ def draw_grid(surface):
 
 def launch_grid():
     grid_running = True
-    grid_screen = pygame.display.set_mode((GRID_WIDTH, GRID_HEIGHT))
+    grid_screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Sudoku Grid")
+
+    background_image = pygame.image.load("background2.png")
+    background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+
     while grid_running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-        draw_grid(grid_screen)
+        grid_screen.fill(WHITE)
+        grid_screen.blit(background_image, (0, 0))
+
+        # draw buttons
+        reset_button.draw(grid_screen)
+        restart_button.draw(grid_screen)
+        exit_button.draw(grid_screen)
+
+        grid_surface = pygame.Surface((GRID_WIDTH, GRID_HEIGHT))
+
+        # Draw the grid (Sudoku board) onto this surface
+        draw_grid(grid_surface)
+
+        # Blit the grid onto the screen at the specified position
+        grid_screen.blit(grid_surface, (GRID_X, GRID_Y))
+
         pygame.display.flip()
 
 # Game loop
@@ -216,13 +241,13 @@ def start_game():
         screen.blit(background_image, (0, 0))
 
         # Title
-        title_text = TITLE_FONT.render("Welcome to Sudoku", True, BLACK)
-        title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 4))
+        title_text = TITLE_FONT.render("Welcome to Sudoku!", True, WHITE)
+        title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 4 + 10))
         screen.blit(title_text, title_rect)
 
         # Subtitle
-        subtitle_text = BUTTON_FONT.render("Select a Game Mode:", True, BLACK)
-        subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, HEIGHT // 4 + 70))
+        subtitle_text = BUTTON_FONT.render("Select a Game Mode:", True, WHITE)
+        subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, HEIGHT // 4 + 150))
         screen.blit(subtitle_text, subtitle_rect)
 
         # Draw buttons
