@@ -2,6 +2,7 @@ import pygame
 import sys
 import sudoku_generator
 
+
 # Initialize pygame
 pygame.init()
 
@@ -142,12 +143,20 @@ class Board:
         self.selected_cell.is_selected = True
 
     def click(self, row, col):
+        if (175 <= row <= 625) and (75 <= col <= 525):
+            x = ((col - 75) // 50)
+            y = ((row - 175) // 50)
+            position = (x, y)
+            return position
+        else:
+            return None
         pass
         #If a tuple of (x,y) coordinates is within the displayed board, 
         #this function returns a tuple of the (row, col) of the cell which was clicked. 
         #Otherwise, this function returns None.
 
     def clear(self):
+
         pass
         #Clears the value cell. 
         #Note that the user can only remove the cell values and 
@@ -267,7 +276,10 @@ def start_game():
                 elif hard_button.is_clicked(event.pos):
                     launch_grid()
 
+
+
         pygame.display.flip()
 
 # Start the game
 start_game()
+
