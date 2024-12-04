@@ -66,6 +66,25 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_box(self, row_start, col_start, num):
+        row_counter = 0
+        col_counter = 0
+        # row checker
+        for row in range(0, 3):
+            for obj in range(0, 3):
+                if self.board[row_start + row][col_start + obj] == num and self.board[row_start + row][
+                    col_start + obj] != 0:
+                    row_counter += 1
+                    if row_counter > 1:
+                        return False
+        # column checker
+        for col in range(0, 3):
+            for obj in range(0, 3):
+                if self.board[row_start + obj][col_start + col] == num and self.board[row_start + obj][
+                    col_start + col] != 0:
+                    col_counter += 1
+                    if col_counter > 1:
+                        return False
+        return True
         pass
     
     '''
@@ -94,6 +113,12 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_box(self, row_start, col_start):
+        for i in range(0, 3):
+            for j in range(0, 3):
+                self.board[row_start + i][col_start + j] = random.randrange(1, 9)
+                num = self.board[row_start + i][col_start + j]
+                if self.valid_in_box(row_start, col_start, num) is False:
+                    self.board[row_start + i][col_start + j] = random.randrange(1, 9)
         pass
     
     '''
