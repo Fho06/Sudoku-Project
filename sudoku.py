@@ -1,5 +1,6 @@
 import pygame
 import sys
+import sudoku_generator
 
 # Initialize pygame
 pygame.init()
@@ -70,12 +71,30 @@ class Cell:
         self.screen.blit(CELL_VALUE_FONT.render(self.value, False, textColor), (self.row,self.col))
 
 # Board Class
+# Difficulty 1 = easy, 2 = medium, 3 = hard
 class Board:
     def __init__(self, width, height, screen, difficulty):
-        pass
         #Constructor for the Board class.
         #screen is a window from PyGame.
         #difficulty is a variable to indicate if the user chose easy medium, or hard.
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+
+        cellSize = GRID_WIDTH // 9
+        
+        # Generates solved sudoku board and starting board
+        sudokuGen = SudokuGenerator(9, 20 + 10 * difficulty)
+        sudokuGen.fill_values()
+        self.solution = sudokuGen.get_board()
+        self.startingBoard = sudokuGen.remove_cells()
+
+        # sets up 2d list of cells
+        # Format: cell_list[row][column]
+        for row in range(height):
+            for col in range(width)
+                self.cell_list[row][col] = Cell(self.startingBoard[row][col], row * cellSize, col * cellSize, screen) 
 
     def draw(self):
         pass
