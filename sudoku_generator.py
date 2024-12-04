@@ -118,7 +118,9 @@ class SudokuGenerator:
             for j in range(0, 3):
                 self.board[row_start + i][col_start + j] = random.randrange(1, 9)
                 num = self.board[row_start + i][col_start + j]
-                if self.valid_in_box(row_start, col_start, num) is False:
+                while True:
+                    if self.valid_in_box(row_start, col_start, num):
+                        break
                     self.board[row_start + i][col_start + j] = random.randrange(1, 9)
     
     '''
