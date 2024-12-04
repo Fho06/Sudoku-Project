@@ -20,18 +20,20 @@ DARK_BLUE = (50, 100, 200)
 # Fonts
 pygame.font.init()
 TITLE_FONT = pygame.font.Font(None, 50)
-BUTTON_FONT = pygame.font.Font(None, 36)
-CELL_VALUE_FONT = pygame.font.Font(None, 36)
+BUTTON_FONT = pygame.font.Font(None, 28)
+CELL_VALUE_FONT = pygame.font.Font(None, 28)
 
 # Button class
 class Button:
-    def __init__(self, x, y, width, height, text):
+    def __init__(self, x, y, width, height, text, image_path):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image, (width, height))
 
     def draw(self, surface):
-        pygame.draw.rect(surface, BLUE, self.rect)
-        pygame.draw.rect(surface, DARK_BLUE, self.rect, 3)  # Border
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+
         text_surf = BUTTON_FONT.render(self.text, True, WHITE)
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
@@ -41,9 +43,10 @@ class Button:
 
 # Buttons
 button_width, button_height = 120, 50
-easy_button = Button(WIDTH // 2 - button_width - 100, HEIGHT // 2, button_width, button_height, "Easy")
-medium_button = Button(WIDTH // 2 - button_width // 2, HEIGHT // 2, button_width, button_height, "Medium")
-hard_button = Button(WIDTH // 2 + button_width // 2 + 40, HEIGHT // 2, button_width, button_height, "Hard")
+button_offset_y = 30
+easy_button = Button(WIDTH // 2 - button_width - 100, HEIGHT // 2 + button_offset_y, button_width, button_height, "Easy", "button.png")
+medium_button = Button(WIDTH // 2 - button_width // 2, HEIGHT // 2 + button_offset_y, button_width, button_height, "Medium", "button.png")
+hard_button = Button(WIDTH // 2 + button_width // 2 + 40, HEIGHT // 2 + button_offset_y, button_width, button_height, "Hard", "button.png")
 
 # Cell Class
 class Cell:
@@ -77,6 +80,8 @@ class Board:
         #Constructor for the Board class.
         #screen is a window from PyGame.
         #difficulty is a variable to indicate if the user chose easy medium, or hard.
+        self.cell_size = None
+        self.cell_list = None
         self.selected_cell = None
         self.width = width
         self.height = height
@@ -202,8 +207,13 @@ def launch_grid():
 def start_game():
     running = True
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+    background_image = pygame.image.load("background.png")
+    background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+
     while running:
         screen.fill(WHITE)
+        screen.blit(background_image, (0, 0))
 
         # Title
         title_text = TITLE_FONT.render("Welcome to Sudoku", True, BLACK)
@@ -212,7 +222,7 @@ def start_game():
 
         # Subtitle
         subtitle_text = BUTTON_FONT.render("Select a Game Mode:", True, BLACK)
-        subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, HEIGHT // 4 + 50))
+        subtitle_rect = subtitle_text.get_rect(center=(WIDTH // 2, HEIGHT // 4 + 70))
         screen.blit(subtitle_text, subtitle_rect)
 
         # Draw buttons
