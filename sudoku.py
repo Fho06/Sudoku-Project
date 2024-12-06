@@ -24,7 +24,7 @@ DARK_BLUE = (50, 100, 200)
 pygame.font.init()
 TITLE_FONT = pygame.font.Font('PressStart2P-Regular.ttf', 30)
 BUTTON_FONT = pygame.font.Font('PressStart2P-Regular.ttf',  15)
-CELL_VALUE_FONT = pygame.font.Font('PressStart2P-Regular.ttf',  8)
+CELL_VALUE_FONT = pygame.font.Font('PressStart2P-Regular.ttf',  12)
 
 # Button class
 class Button:
@@ -77,11 +77,16 @@ class Cell:
         if(self.value != "0"):
             if self.sketched:
                 textColor = GRAY
+                num = CELL_VALUE_FONT.render(self.value, False, textColor)
+                offset_x = 0
+                offset_y = 0
             else:
                 textColor = BLACK
+                num = CELL_VALUE_FONT.render(self.value, False, textColor)
+                offset_x = self.cellSize / 2 - num.get_rect().width / 2
+                offset_y = self.cellSize / 2 - num.get_rect().height / 2
 
-            num = CELL_VALUE_FONT.render(self.value, False, textColor)
-            self.screen.blit(num, (self.col + self.cellSize / 2 - num.get_rect().width / 2, self.row + self.cellSize / 2 - num.get_rect().height / 2))
+            self.screen.blit(num, (self.col + offset_x, self.row + offset_y))
 
 # Board Class
 # Difficulty 1 = easy, 2 = medium, 3 = hard
@@ -155,7 +160,6 @@ class Board:
             return position
         else:
             return None
-        pass
         #If a tuple of (x,y) coordinates is within the displayed board, 
         #this function returns a tuple of the (row, col) of the cell which was clicked. 
         #Otherwise, this function returns None.
