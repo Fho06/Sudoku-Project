@@ -57,28 +57,31 @@ exit_button = Button(WIDTH // 2 + button_width // 2 + 40, GRID_Y + GRID_HEIGHT +
 
 # Cell Class
 class Cell:
-    def __init__(self, value, row, col, screen):
-        self.value = value
+    def __init__(self, value, row, col, screen, cellSize):
+        self.value = str(value)
         self.row = row
         self.col = col
         self.screen = screen
         self.sketched = False
+        self.cellSize = cellSize
 
     def set_cell_value(self, value):
         self.sketched = False
-        self.value = value
+        self.value = str(value)
 
     def set_sketched_value(self, value):
         self.sketched = True
-        self.value = False
+        self.value = str(value)
 
     def draw(self):
-        if self.sketched:
-            textColor = GRAY
-        else:
-            textColor = BLACK
-    
-        self.screen.blit(CELL_VALUE_FONT.render(self.value, False, textColor), (self.row,self.col))
+        if(self.value != "0"):
+            if self.sketched:
+                textColor = GRAY
+            else:
+                textColor = BLACK
+
+            num = CELL_VALUE_FONT.render(self.value, False, textColor)
+            self.screen.blit(num, (self.col + self.cellSize / 2 - num.get_rect().width / 2, self.row + self.cellSize / 2 - num.get_rect().height / 2))
 
 # Board Class
 # Difficulty 1 = easy, 2 = medium, 3 = hard
@@ -94,6 +97,7 @@ class Board:
         self.height = height
         self.screen = screen
         self.difficulty = difficulty
+        self.cell_list = [[0 for _ in range(9)] for _ in range(9)]
 
         cellSize = GRID_WIDTH // 9
         
@@ -101,22 +105,24 @@ class Board:
         sudokuGen = sudoku_generator.SudokuGenerator(9, 20 + 10 * difficulty)
         sudokuGen.fill_values()
         self.solution = sudokuGen.get_board()
-        self.startingBoard = sudokuGen.remove_cells()
-
+        pass
+        sudokuGen.remove_cells()
+        self.startingBoard = sudokuGen.get_board()
+        
         # sets up 2d list of cells
         # Format: cell_list[row][column]
         for row in range(height):
             for col in range(width):
-                self.cell_list[row][col] = Cell(self.startingBoard[row][col], row * cellSize, col * cellSize, screen) 
+                self.cell_list[row][col] = Cell(self.startingBoard[row][col], row * cellSize, col * cellSize, screen, cellSize) 
 
     def draw(self):
         #Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
         #Draws every cell on this board.
-
+        pass
         # draw each cell
         for row in range(self.height):
             for col in range(self.width):
-                self.cell_list[row][col].draw(self.cell_size)
+                self.cell_list[row][col].draw()
 
         # draw grid lines with thicker lines for 3x3 boxes
         cell_size = GRID_WIDTH // 9
@@ -205,13 +211,17 @@ def draw_grid(surface):
         pygame.draw.line(surface, BLACK, (0, i * cell_size), (GRID_WIDTH, i * cell_size), thickness)  # Horizontal
         pygame.draw.line(surface, BLACK, (i * cell_size, 0), (i * cell_size, GRID_HEIGHT), thickness)  # Vertical
 
-def launch_grid():
+def launch_grid(difficulty):
     grid_running = True
     grid_screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Sudoku Grid")
 
     background_image = pygame.image.load("background2.png")
     background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+
+    # Create board object
+    grid_surface = pygame.Surface((GRID_WIDTH, GRID_HEIGHT))
+    boardObj = Board(9, 9, grid_surface, difficulty)
 
     while grid_running:
         for event in pygame.event.get():
@@ -227,10 +237,12 @@ def launch_grid():
         restart_button.draw(grid_screen)
         exit_button.draw(grid_screen)
 
-        grid_surface = pygame.Surface((GRID_WIDTH, GRID_HEIGHT))
+        draw_grid(grid_surface)
+        boardObj.draw()
+
+#        grid_surface = pygame.Surface((GRID_WIDTH, GRID_HEIGHT))
 
         # Draw the grid (Sudoku board) onto this surface
-        draw_grid(grid_surface)
 
         # Blit the grid onto the screen at the specified position
         grid_screen.blit(grid_surface, (GRID_X, GRID_Y))
@@ -239,13 +251,16 @@ def launch_grid():
 
 # Game loop
 def start_game():
-    running = True
+    runningTitle = True
+    runningGame = True
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     background_image = pygame.image.load("background.png")
     background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 
-    while running:
+    difficulty = 1
+
+    while runningTitle: # Title Menu
         screen.fill(WHITE)
         screen.blit(background_image, (0, 0))
 
@@ -270,15 +285,17 @@ def start_game():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.is_clicked(event.pos):
-                    launch_grid()
+                    launch_grid(1)
                 elif medium_button.is_clicked(event.pos):
-                    launch_grid()
+                    launch_grid(2)
                 elif hard_button.is_clicked(event.pos):
-                    launch_grid()
-
-
-
+                    launch_grid(3)
+        
         pygame.display.flip()
+
+
+
+
 
 # Start the game
 start_game()
