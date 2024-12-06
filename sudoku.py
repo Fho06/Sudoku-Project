@@ -104,7 +104,7 @@ class Board:
         # Generates solved sudoku board and starting board
         sudokuGen = sudoku_generator.SudokuGenerator(9, 20 + 10 * difficulty)
         sudokuGen.fill_values()
-        self.solution = sudokuGen.get_board()
+        self.solution =[row[:] for row in sudokuGen.get_board()]
         pass
         sudokuGen.remove_cells()
         self.startingBoard = sudokuGen.get_board()
@@ -118,7 +118,6 @@ class Board:
     def draw(self):
         #Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
         #Draws every cell on this board.
-        pass
         # draw each cell
         for row in range(self.height):
             for col in range(self.width):
@@ -162,7 +161,6 @@ class Board:
         #Otherwise, this function returns None.
 
     def clear(self):
-
         pass
         #Clears the value cell. 
         #Note that the user can only remove the cell values and 
@@ -179,13 +177,19 @@ class Board:
         #Called when the user presses the Enter key.
 
     def reset_to_original(self):
-        pass
         #Resets all cells in the board to their original values 
         #(0 if cleared, otherwise the corresponding digit).
+        for row in range(self.height):
+            for col in range(self.width):
+                self.cell_list[row][col].set_cell_value(self.startingBoard[row][col])
 
     def is_full(self):
-        pass
         #Returns a Boolean value indicating whether the board is full or not.
+        for row in range(self.height):
+            for col in range(self.width):
+                if(self.cell_list[row][col].value() == "0"):
+                    return False
+        return True
 
     def update_board(self):
         pass
@@ -196,8 +200,12 @@ class Board:
         #Finds an empty cell and returns its row and col as a tuple (x,y).
 
     def check_board(self):
-        pass
         #Check whether the Sudoku board is solved correctly.
+        for row in range(self.height):
+            for col in range(self.width):
+                if(self.cell_list[row][col].value() == self.solution[row][col]):
+                    return False
+        return True
 
 
 # Draw 9x9 Sudoku grid
