@@ -187,6 +187,8 @@ class Board:
             for col in range(self.width):
                 self.cell_list[row][col].set_cell_value(self.startingBoard[row][col])
 
+
+
     def is_full(self):
         #Returns a Boolean value indicating whether the board is full or not.
         for row in range(self.height):
@@ -240,6 +242,13 @@ def launch_grid(difficulty):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if reset_button.is_clicked(event.pos):
+                    boardObj.reset_to_original()
+                elif restart_button.is_clicked(event.pos):
+                    start_game()
+                elif exit_button.is_clicked(event.pos):
+                    pygame.quit()
 
         grid_screen.fill(WHITE)
         grid_screen.blit(background_image, (0, 0))
