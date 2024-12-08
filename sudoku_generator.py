@@ -12,7 +12,7 @@ class SudokuGenerator:
     #Initializes variables
     def __init__(self, row_length, removed_cells): #FABIAN
         self.row_length = row_length
-        self.removed_cells = removed_cells
+        self.removed_cells = 1
         self.board = [[0 for _ in range(row_length)] for _ in range(row_length)]
         self.box_length = int(math.sqrt(row_length))
 

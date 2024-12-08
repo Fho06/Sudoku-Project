@@ -64,6 +64,7 @@ class Cell:
         self.screen = screen
         self.sketched = False
         self.cellSize = cellSize
+        self.original_cell = self.value != "0"
 
     def set_cell_value(self, value):
         self.sketched = False
@@ -76,10 +77,10 @@ class Cell:
     def draw(self):
         if(self.value != "0"):
             if self.sketched:
-                textColor = GRAY
+                textColor = (100,100,100)
                 num = CELL_VALUE_FONT.render(self.value, False, textColor)
-                offset_x = 0
-                offset_y = 0
+                offset_x = 5
+                offset_y = 5
             else:
                 textColor = BLACK
                 num = CELL_VALUE_FONT.render(self.value, False, textColor)
@@ -119,6 +120,9 @@ class Board:
         for row in range(height):
             for col in range(width):
                 self.cell_list[row][col] = Cell(self.startingBoard[row][col], row * cellSize, col * cellSize, screen, cellSize) 
+
+    def is_clicked(self, pos):
+        return pygame.Rect(GRID_X,GRID_Y,GRID_WIDTH,GRID_HEIGHT).collidepoint(pos)
 
     def draw(self):
         #Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
@@ -171,14 +175,16 @@ class Board:
         #sketched values that are filled by themselves.
 
     def sketch(self, value):
-        pass
         #Sets the sketched value of the current selected cell equal to the user entered value.
         #It will be displayed at the top left corner of the cell using the draw() function.
+        if(not self.selected_cell.original_cell):
+            self.selected_cell.set_sketched_value(value)    
 
-    def place_number(self, value):
-        pass
+    def place_number(self):
         #Sets the value of the current selected cell equal to the user entered value. 
         #Called when the user presses the Enter key.
+        self.selected_cell.set_cell_value(self.selected_cell.value)
+
 
     def reset_to_original(self):
         #Resets all cells in the board to their original values 
@@ -193,7 +199,7 @@ class Board:
         #Returns a Boolean value indicating whether the board is full or not.
         for row in range(self.height):
             for col in range(self.width):
-                if(self.cell_list[row][col].value() == "0"):
+                if(self.cell_list[row][col].value == "0"):
                     return False
         return True
 
@@ -209,10 +215,29 @@ class Board:
         #Check whether the Sudoku board is solved correctly.
         for row in range(self.height):
             for col in range(self.width):
-                if(self.cell_list[row][col].value() == self.solution[row][col]):
+                if(self.cell_list[row][col].value == self.solution[row][col]):
                     return False
         return True
 
+def endingScreen(text):
+    background_image = pygame.image.load("background2.png")
+    background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+    while(True):
+        screen.blit(background_image,(0,0))
+        textLabel = TITLE_FONT.render(text, False, BLACK)
+        text_rect = textLabel.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(textLabel, text_rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.quit()
+        
+        pygame.display.flip()
 
 # Draw 9x9 Sudoku grid
 def draw_grid(surface):
@@ -249,6 +274,25 @@ def launch_grid(difficulty):
                     start_game()
                 elif exit_button.is_clicked(event.pos):
                     pygame.quit()
+                elif boardObj.is_clicked(event.pos):
+                    col = (event.pos[0] - GRID_X) // 50 
+                    row = (event.pos[1] - GRID_Y) // 50 
+                    boardObj.select(row, col)
+            elif event.type == pygame.KEYDOWN:
+                if(event.key >= pygame.K_0 and event.key <= pygame.K_9):
+                    boardObj.sketch(event.key - pygame.K_0)
+                elif(event.key == pygame.K_RETURN):
+                    boardObj.place_number()
+                    if(boardObj.is_full()):
+                        gameWin = True
+                        for row in range(9):
+                            for col in range(9):
+                                if(boardObj.cell_list[row][col].value != str(boardObj.solution[row][col])):
+                                    gameWin = False
+                        if(gameWin):
+                            endingScreen("Game Won")
+                        else:
+                            endingScreen("Game Lost")
 
         grid_screen.fill(WHITE)
         grid_screen.blit(background_image, (0, 0))
@@ -261,7 +305,7 @@ def launch_grid(difficulty):
         draw_grid(grid_surface)
         boardObj.draw()
 
-#        grid_surface = pygame.Surface((GRID_WIDTH, GRID_HEIGHT))
+        # grid_surface = pygame.Surface((GRID_WIDTH, GRID_HEIGHT))
 
         # Draw the grid (Sudoku board) onto this surface
 
